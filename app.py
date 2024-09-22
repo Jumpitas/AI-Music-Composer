@@ -2,22 +2,16 @@
 
 import streamlit as st
 import numpy as np
-import os
 import pickle
 import random
 import subprocess
-import sys
 import platform
-from music21 import converter, instrument, note, chord, stream
+from music21 import instrument, note, chord, stream
 from tensorflow.keras.models import load_model
-from tensorflow.keras.utils import to_categorical
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout, LSTM, Activation
 from pydub import AudioSegment
-from io import BytesIO
 
 # Set up paths
-MODEL_PATH = 'weights-improvement-best.keras'  # Update with your model file
+MODEL_PATH = 'weights-improvement-final.keras'  # Update with your model file
 NOTES_PATH = 'data/notes.pkl'
 SOUNDFONT_PATH = 'soundfonts/FluidR3_GM.sf2'  # Update with your .sf2 file name
 OUTPUT_MIDI = 'streamlit_output.mid'
@@ -25,8 +19,12 @@ OUTPUT_WAV = 'streamlit_output.wav'
 OUTPUT_MP3 = 'streamlit_output.mp3'
 
 # Load necessary data
-with open(NOTES_PATH, 'rb') as filepath:
-    notes = pickle.load(filepath)
+@st.cache_data
+def load_notes():
+    with open(NOTES_PATH, 'rb') as filepath:
+        return pickle.load(filepath)
+
+notes = load_notes()
 
 # Get all pitch names
 pitchnames = sorted(set(notes))
@@ -34,31 +32,38 @@ n_vocab = len(pitchnames)
 
 # Map pitches to integers and vice versa
 note_to_int = {note: number for number, note in enumerate(pitchnames)}
-int_to_note = dict(enumerate(pitchnames))
+int_to_note = {number: note for number, note in enumerate(pitchnames)}
 
 # Prepare sequences used by the model
 sequence_length = 100  # Use the same sequence length as in training
 
 # Prepare input sequences
-network_input = []
-for i in range(0, len(notes) - sequence_length):
-    sequence_in = notes[i:i + sequence_length]
-    network_input.append([note_to_int[char] for char in sequence_in])
+@st.cache_data
+def prepare_sequences(notes, sequence_length):
+    network_input = []
+    for i in range(0, len(notes) - sequence_length):
+        sequence_in = notes[i:i + sequence_length]
+        network_input.append([note_to_int[char] for char in sequence_in])
+    return network_input
 
-# Reshape and normalize input
-n_patterns = len(network_input)
-network_input = np.reshape(network_input, (n_patterns, sequence_length, 1))
-network_input = network_input / float(n_vocab)
+network_input = prepare_sequences(notes, sequence_length)
 
 # Load the model
-model = load_model(MODEL_PATH)
+@st.cache_resource
+def load_trained_model():
+    return load_model(MODEL_PATH)
 
-def generate_notes(model, network_input, pitchnames, n_vocab, generate_length=500):
+model = load_trained_model()
+
+def generate_notes(model, notes, pitchnames, n_vocab, generate_length=500):
     """Generate notes from the neural network based on a sequence of notes."""
-    # Pick a random seed
-    start = np.random.randint(0, len(network_input)-1)
-    pattern = network_input[start]
+    # Map notes to integers
+    note_to_int = {note: number for number, note in enumerate(pitchnames)}
     int_to_note = {number: note for number, note in enumerate(pitchnames)}
+
+    # Pick a random sequence from the input as a starting point for generation
+    start = np.random.randint(0, len(network_input) - 1)
+    pattern = network_input[start]
 
     prediction_output = []
 
@@ -73,7 +78,8 @@ def generate_notes(model, network_input, pitchnames, n_vocab, generate_length=50
         result = int_to_note[index]
         prediction_output.append(result)
 
-        pattern = np.append(pattern[1:], [[index]], axis=0)
+        pattern.append(index)
+        pattern = pattern[1:]  # Move forward in the sequence
 
     return prediction_output
 
@@ -106,13 +112,6 @@ def create_midi(prediction_output, output_filename=OUTPUT_MIDI):
 
     midi_stream = stream.Stream(output_notes)
     midi_stream.write('midi', fp=output_filename)
-
-    # Convert MIDI to WAV
-    midi_to_audio(output_filename, OUTPUT_WAV, SOUNDFONT_PATH)
-
-    # Convert WAV to MP3
-    sound = AudioSegment.from_wav(OUTPUT_WAV)
-    sound.export(OUTPUT_MP3, format='mp3')
 
 def midi_to_audio(midi_file, audio_file, soundfont_path):
     """Convert MIDI file to audio file using FluidSynth."""
@@ -147,8 +146,16 @@ generate_length = st.slider('Select Composition Length (in notes)', 100, 1000, 5
 
 if st.button('Generate Music'):
     with st.spinner('Generating music...'):
-        prediction_output = generate_notes(model, network_input, pitchnames, n_vocab, generate_length)
+        prediction_output = generate_notes(model, notes, pitchnames, n_vocab, generate_length)
         create_midi(prediction_output)
+
+        # Convert MIDI to WAV
+        midi_to_audio(OUTPUT_MIDI, OUTPUT_WAV, SOUNDFONT_PATH)
+
+        # Convert WAV to MP3
+        sound = AudioSegment.from_wav(OUTPUT_WAV)
+        sound.export(OUTPUT_MP3, format='mp3')
+
     st.success('Music generated successfully!')
 
     # Play the audio file
@@ -156,6 +163,6 @@ if st.button('Generate Music'):
     audio_bytes = audio_file.read()
     st.audio(audio_bytes, format='audio/mp3')
 
-    # Provide download link
+    # Provide download links
     st.download_button(label='Download MIDI File', data=open(OUTPUT_MIDI, 'rb'), file_name='generated_music.mid', mime='audio/midi')
     st.download_button(label='Download MP3 File', data=open(OUTPUT_MP3, 'rb'), file_name='generated_music.mp3', mime='audio/mp3')
