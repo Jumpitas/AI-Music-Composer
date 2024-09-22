@@ -1,1 +1,2 @@
 *.sf2 filter=lfs diff=lfs merge=lfs -text
+soundfonts/FluidR3_GM.sf2 filter=lfs diff=lfs merge=lfs -text
