@@ -1,4 +1,4 @@
-# code.py
+# music_training.py
 
 import os
 import glob
@@ -15,7 +15,7 @@ from tensorflow.keras.callbacks import ModelCheckpoint
 # ============================
 
 def get_notes(file_path):
-    """Extract notes and chords from a MIDI file."""
+    """Extract notes and chords with durations from a MIDI file."""
     notes = []
     try:
         midi = converter.parse(file_path)
@@ -34,25 +34,35 @@ def get_notes(file_path):
             notes_to_parse = part.recurse()
             for element in notes_to_parse:
                 if isinstance(element, note.Note):
-                    notes.append(str(element.pitch))
+                    duration = element.duration.quarterLength
+                    notes.append(f"{str(element.pitch)}:{duration}")
                 elif isinstance(element, chord.Chord):
-                    notes.append('.'.join(str(n) for n in element.normalOrder))
+                    duration = element.duration.quarterLength
+                    chord_str = '.'.join(str(n) for n in element.normalOrder)
+                    notes.append(f"{chord_str}:{duration}")
     else:
         # No instrument parts, attempt to parse flat notes
         notes_to_parse = midi.flat.notes
         for element in notes_to_parse:
             if isinstance(element, note.Note):
-                notes.append(str(element.pitch))
+                duration = element.duration.quarterLength
+                notes.append(f"{str(element.pitch)}:{duration}")
             elif isinstance(element, chord.Chord):
-                notes.append('.'.join(str(n) for n in element.normalOrder))
+                duration = element.duration.quarterLength
+                chord_str = '.'.join(str(n) for n in element.normalOrder)
+                notes.append(f"{chord_str}:{duration}")
     return notes
 
+
 def process_midi_files(directory):
-    """Process all MIDI files in the given directory."""
+    """Process all MIDI files in the given directory and its subdirectories."""
     all_notes = []
-    for file in glob.glob(f"{directory}/*.mid"):
-        notes = get_notes(file)
-        all_notes.extend(notes)
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            if file.lower().endswith(('.mid', '.midi')):
+                file_path = os.path.join(root, file)
+                notes = get_notes(file_path)
+                all_notes.extend(notes)
     return all_notes
 
 # ============================
@@ -64,14 +74,8 @@ if __name__ == "__main__":
     if not os.path.exists('data'):
         os.makedirs('data')
 
-    # Process jazz guitar MIDI files
-    jazz_notes = process_midi_files('midi_files/jazz_guitar')
-
-    # Process classical clarinet MIDI files
-    classical_notes = process_midi_files('midi_files/classical_clarinet')
-
-    # Combine notes from both genres
-    all_notes = jazz_notes + classical_notes
+    # Process all MIDI files in 'midi_files' directory and its subdirectories
+    all_notes = process_midi_files('midi_files')
 
     # Save notes to a file
     with open('data/notes.pkl', 'wb') as filepath:
@@ -87,13 +91,14 @@ if __name__ == "__main__":
     with open('data/notes.pkl', 'rb') as filepath:
         notes = pickle.load(filepath)
 
-    # Get all pitch names
+    # Get all pitch-duration names
     pitchnames = sorted(set(notes))
     n_vocab = len(pitchnames)
-    print(f"Unique pitches: {n_vocab}")
+    print(f"Unique pitch-duration tokens: {n_vocab}")
 
     # Map pitches to integers and vice versa
     note_to_int = {note: number for number, note in enumerate(pitchnames)}
+    int_to_note = {number: note for number, note in enumerate(pitchnames)}
 
     # Prepare input and output sequences
     sequence_length = 100
@@ -149,14 +154,15 @@ if __name__ == "__main__":
     # 4. Train the Model
     # ============================
 
-    # Define the checkpoint
-    filepath = "weights-improvement-{epoch:02d}-{loss:.4f}.keras"
+    # Define the checkpoint with HDF5 format
+    filepath = "weights-improvement-{epoch:02d}-{loss:.4f}.h5"
     checkpoint = ModelCheckpoint(
         filepath,
         monitor='loss',
         verbose=1,
         save_best_only=True,
-        mode='min'
+        mode='min',
+        save_format='h5'  # Explicitly specify HDF5 format
     )
     callbacks_list = [checkpoint]
 
@@ -167,7 +173,7 @@ if __name__ == "__main__":
     # 5. Save the Final Model
     # ============================
 
-    # Save the final model
-    model.save('weights-improvement-final.keras')
+    # Save the final model in HDF5 format
+    model.save('weights-improvement-final.h5', save_format='h5')
 
     print("Model training complete and saved.")
