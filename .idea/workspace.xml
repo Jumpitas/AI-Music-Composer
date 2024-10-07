@@ -5,8 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d635f7fb-06a9-4b40-8247-1cd1e387ec10" name="Changes" comment="v1">
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/weights-improvement-01-4.9514.keras" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/app.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/midi_to_wav.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/music_training.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/network_input.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/network_output.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/notes.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/midi_files/classical_clarinet/file1.mid" beforeDir="false" afterPath="$PROJECT_DIR$/data/midi_files/mozart/file1.mid" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/midi_files/classical_clarinet/file2.mid" beforeDir="false" afterPath="$PROJECT_DIR$/data/midi_files/mozart/file2.mid" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/midi_files/classical_clarinet/file3.mid" beforeDir="false" afterPath="$PROJECT_DIR$/data/midi_files/mozart/file3.mid" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/midi_files/jazz_guitar/file1.mid" beforeDir="false" afterPath="$PROJECT_DIR$/data/midi_files/jazz/file1.mid" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/midi_files/jazz_guitar/file2.mid" beforeDir="false" afterPath="$PROJECT_DIR$/data/midi_files/jazz/file2.mid" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/midi_files/jazz_guitar/file3.mid" beforeDir="false" afterPath="$PROJECT_DIR$/data/midi_files/jazz/file3.mid" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/music_training.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,6 +36,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 3
 }</component>
@@ -36,7 +52,8 @@
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/eduardo/PycharmProjects/Lung Cancer&quot;
   }
 }</component>
   <component name="SharedIndexes">
@@ -71,7 +88,15 @@
       <option name="project" value="LOCAL" />
       <updated>1727015127287</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="v1">
+      <option name="closed" value="true" />
+      <created>1727261462099</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1727261462099</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
