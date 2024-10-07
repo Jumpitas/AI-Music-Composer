@@ -5,15 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d635f7fb-06a9-4b40-8247-1cd1e387ec10" name="Changes" comment="v2">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/midi_files/jazz/file1.mid" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/data/midi_files/Jazz/file1.mid" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/midi_files/jazz/file2.mid" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/data/midi_files/Jazz/file2.mid" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/midi_files/jazz/file3.mid" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/data/midi_files/Jazz/file3.mid" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/midi_files/mozart/file1.mid" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/data/midi_files/Mozart/file1.mid" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/midi_files/mozart/file2.mid" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/data/midi_files/Mozart/file2.mid" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/midi_files/mozart/file3.mid" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/data/midi_files/Mozart/file3.mid" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/logs/events.out.tfevents.1728322248.JumKali.114362.0" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/logs/events.out.tfevents.1728322248.JumKali.114362.0" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/music_training.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/music_training.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights-improvement-final.keras" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,7 +99,15 @@
       <option name="project" value="LOCAL" />
       <updated>1728319649757</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="v2">
+      <option name="closed" value="true" />
+      <created>1728322362488</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1728322362488</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

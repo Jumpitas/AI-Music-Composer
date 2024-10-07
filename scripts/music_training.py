@@ -211,6 +211,7 @@ def encode_tokens(tokens, tokenizer):
     text = ' '.join(tokens)
     # Encode without truncation to capture all tokens
     encoded = tokenizer.encode(text, add_special_tokens=False)
+    logging.info(f"Encoded tokens length: {len(encoded)}")
     return encoded
 
 
@@ -262,6 +263,7 @@ if __name__ == "__main__":
         exit(1)
     else:
         logging.info(f"Tokenizer pad_token: {tokenizer.pad_token}")
+        logging.info(f"Tokenizer pad_token_id: {tokenizer.pad_token_id}")
 
     # Step 4: Encode tokens
     encoded_tokens = encode_tokens(all_notes, tokenizer)
