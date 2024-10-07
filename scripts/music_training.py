@@ -4,7 +4,13 @@ import os
 import pickle
 import logging
 from music21 import converter, instrument, note, chord
-from transformers import GPT2Tokenizer, GPT2LMHeadModel, Trainer, TrainingArguments, DataCollatorForLanguageModeling
+from transformers import (
+    GPT2Tokenizer,
+    GPT2LMHeadModel,
+    Trainer,
+    TrainingArguments,
+    DataCollatorForLanguageModeling
+)
 from datasets import Dataset
 from tqdm import tqdm
 
@@ -12,12 +18,13 @@ from tqdm import tqdm
 # Configuration Parameters
 # ============================
 
-DATA_DIR = 'data/midi_files'
-PROCESSED_DIR = 'data/processed'
-MODEL_DIR = 'models/gpt2-music'
-OUTPUT_DIR = 'outputs'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Absolute path to the script directory
+DATA_DIR = os.path.join(BASE_DIR, 'data/midi_files')
+PROCESSED_DIR = os.path.join(BASE_DIR, 'data/processed')
+MODEL_DIR = os.path.join(BASE_DIR, 'models/gpt2-music')
+OUTPUT_DIR = os.path.join(BASE_DIR, 'outputs')
 
-SEQUENCE_LENGTH = 1024  # Transformer context length
+SEQUENCE_LENGTH = 64  # Transformer context length (increased for better performance)
 BATCH_SIZE = 2  # Adjust based on GPU memory
 EPOCHS = 10
 LEARNING_RATE = 5e-5
@@ -109,6 +116,8 @@ def process_style(style):
         logging.warning(f"Style directory {style_dir} does not exist. Skipping.")
         return all_notes
 
+    logging.info(f"Files in {style_dir}: {os.listdir(style_dir)}")  # Log the contents of the style directory
+
     for root, _, files in os.walk(style_dir):
         for file in files:
             if file.lower().endswith(('.mid', '.midi')):
@@ -177,6 +186,10 @@ def create_tokenizer(tokens, tokenizer_path='models/tokenizer'):
     tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
     # Add new tokens
     tokenizer.add_tokens(unique_tokens)
+    # Add a padding token if not already present
+    if tokenizer.pad_token is None:
+        tokenizer.add_special_tokens({'pad_token': '<PAD>'})
+        logging.info("Added <PAD> token to the tokenizer.")
     # Save the tokenizer
     tokenizer.save_pretrained(tokenizer_path)
     logging.info(f"Tokenizer saved to {tokenizer_path}")
@@ -196,23 +209,28 @@ def encode_tokens(tokens, tokenizer):
     """
     # Join tokens into a single string separated by spaces
     text = ' '.join(tokens)
-    encoded = tokenizer(text, return_tensors='pt', max_length=SEQUENCE_LENGTH, truncation=True)
-    return encoded['input_ids'][0].tolist()
+    # Encode without truncation to capture all tokens
+    encoded = tokenizer.encode(text, add_special_tokens=False)
+    return encoded
 
 
-def prepare_dataset(encoded_tokens):
+def prepare_dataset(encoded_tokens, tokenizer):
     """
     Prepare dataset for training by creating input sequences.
 
     Parameters:
     - encoded_tokens (List[int]): List of encoded token IDs.
+    - tokenizer (GPT2Tokenizer): The tokenizer used (needed for pad_token_id).
 
     Returns:
     - List[List[int]]: List of input sequences.
     """
     sequences = []
-    for i in tqdm(range(0, len(encoded_tokens) - SEQUENCE_LENGTH, SEQUENCE_LENGTH)):
+    for i in tqdm(range(0, len(encoded_tokens), SEQUENCE_LENGTH), desc="Preparing sequences"):
         seq = encoded_tokens[i:i + SEQUENCE_LENGTH]
+        if len(seq) < SEQUENCE_LENGTH:
+            # Pad the last sequence if it's shorter than SEQUENCE_LENGTH
+            seq += [tokenizer.pad_token_id] * (SEQUENCE_LENGTH - len(seq))
         sequences.append(seq)
     logging.info(f"Total sequences: {len(sequences)}")
     return sequences
@@ -227,6 +245,10 @@ if __name__ == "__main__":
     all_notes = process_midi_files()
     logging.info(f"Total tokens extracted: {len(all_notes)}")
 
+    if not all_notes:
+        logging.error("No tokens were extracted. Exiting the script.")
+        exit(1)
+
     # Step 2: Save tokens
     tokens_file = os.path.join(PROCESSED_DIR, 'tokens.pkl')
     save_tokens(all_notes, tokens_file)
@@ -234,26 +256,50 @@ if __name__ == "__main__":
     # Step 3: Create and save tokenizer
     tokenizer = create_tokenizer(all_notes, tokenizer_path=os.path.join(MODEL_DIR, 'tokenizer'))
 
+    # Verify that pad_token was added
+    if tokenizer.pad_token is None:
+        logging.error("Tokenizer does not have a pad_token. Exiting the script.")
+        exit(1)
+    else:
+        logging.info(f"Tokenizer pad_token: {tokenizer.pad_token}")
+
     # Step 4: Encode tokens
     encoded_tokens = encode_tokens(all_notes, tokenizer)
 
+    if not encoded_tokens:
+        logging.error("Encoding resulted in no tokens. Exiting the script.")
+        exit(1)
+
     # Step 5: Prepare dataset
-    sequences = prepare_dataset(encoded_tokens)
+    sequences = prepare_dataset(encoded_tokens, tokenizer)
+
+    if not sequences:
+        logging.error("No sequences were created. Exiting the script.")
+        exit(1)
 
     # Step 6: Create Hugging Face Dataset
     dataset = Dataset.from_dict({"input_ids": sequences})
     # Duplicate input_ids for labels
     dataset = dataset.map(lambda x: {"labels": x["input_ids"]}, batched=False)
-    # Split into train and validation
-    split_dataset = dataset.train_test_split(test_size=0.1)
-    train_dataset = split_dataset['train']
-    eval_dataset = split_dataset['test']
 
-    # Step 7: Initialize model
+    # Step 7: Handle small datasets
+    if len(sequences) > 1:
+        split_dataset = dataset.train_test_split(test_size=0.1)
+        train_dataset = split_dataset['train']
+        eval_dataset = split_dataset['test']
+        logging.info(f"Dataset split into {len(train_dataset)} training and {len(eval_dataset)} evaluation samples.")
+    else:
+        train_dataset = dataset
+        eval_dataset = dataset
+        logging.warning("Only one sequence available. Using the entire dataset for both training and evaluation.")
+
+    # Step 8: Initialize model
     model = GPT2LMHeadModel.from_pretrained('gpt2')
     model.resize_token_embeddings(len(tokenizer))  # Adjust token embeddings
+    model.config.pad_token_id = tokenizer.pad_token_id  # Set pad token ID
+    logging.info(f"Model pad_token_id set to: {model.config.pad_token_id}")
 
-    # Step 8: Define training arguments
+    # Step 9: Define training arguments
     training_args = TrainingArguments(
         output_dir=MODEL_DIR,
         overwrite_output_dir=True,
@@ -262,20 +308,20 @@ if __name__ == "__main__":
         per_device_eval_batch_size=BATCH_SIZE,
         evaluation_strategy="epoch",
         save_strategy="epoch",
-        logging_dir='./logs',
+        logging_dir=os.path.join(BASE_DIR, 'logs'),
         logging_steps=100,
         learning_rate=LEARNING_RATE,
         weight_decay=0.01,
         save_total_limit=3,
     )
 
-    # Step 9: Data collator
+    # Step 10: Data collator
     data_collator = DataCollatorForLanguageModeling(
         tokenizer=tokenizer,
         mlm=False,
     )
 
-    # Step 10: Initialize Trainer
+    # Step 11: Initialize Trainer
     trainer = Trainer(
         model=model,
         args=training_args,
@@ -284,10 +330,18 @@ if __name__ == "__main__":
         data_collator=data_collator,
     )
 
-    # Step 11: Train the model
-    trainer.train()
+    # Step 12: Train the model
+    try:
+        trainer.train()
+    except Exception as e:
+        logging.error(f"An error occurred during training: {e}")
+        exit(1)
 
-    # Step 12: Save the final model
-    trainer.save_model(MODEL_DIR)
-    tokenizer.save_pretrained(MODEL_DIR)
-    logging.info(f"Model and tokenizer saved to {MODEL_DIR}")
+    # Step 13: Save the final model
+    try:
+        trainer.save_model(MODEL_DIR)
+        tokenizer.save_pretrained(MODEL_DIR)
+        logging.info(f"Model and tokenizer saved to {MODEL_DIR}")
+    except Exception as e:
+        logging.error(f"An error occurred while saving the model: {e}")
+        exit(1)

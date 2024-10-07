@@ -4,22 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d635f7fb-06a9-4b40-8247-1cd1e387ec10" name="Changes" comment="v1">
-      <change afterPath="$PROJECT_DIR$/scripts/app.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/midi_to_wav.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/music_training.py" afterDir="false" />
+    <list default="true" id="d635f7fb-06a9-4b40-8247-1cd1e387ec10" name="Changes" comment="v2">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/network_input.pkl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/network_output.pkl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/notes.pkl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/midi_files/classical_clarinet/file1.mid" beforeDir="false" afterPath="$PROJECT_DIR$/data/midi_files/mozart/file1.mid" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/midi_files/classical_clarinet/file2.mid" beforeDir="false" afterPath="$PROJECT_DIR$/data/midi_files/mozart/file2.mid" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/midi_files/classical_clarinet/file3.mid" beforeDir="false" afterPath="$PROJECT_DIR$/data/midi_files/mozart/file3.mid" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/midi_files/jazz_guitar/file1.mid" beforeDir="false" afterPath="$PROJECT_DIR$/data/midi_files/jazz/file1.mid" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/midi_files/jazz_guitar/file2.mid" beforeDir="false" afterPath="$PROJECT_DIR$/data/midi_files/jazz/file2.mid" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/midi_files/jazz_guitar/file3.mid" beforeDir="false" afterPath="$PROJECT_DIR$/data/midi_files/jazz/file3.mid" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/music_training.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/midi_files/jazz/file1.mid" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/data/midi_files/Jazz/file1.mid" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/midi_files/jazz/file2.mid" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/data/midi_files/Jazz/file2.mid" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/midi_files/jazz/file3.mid" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/data/midi_files/Jazz/file3.mid" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/midi_files/mozart/file1.mid" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/data/midi_files/Mozart/file1.mid" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/midi_files/mozart/file2.mid" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/data/midi_files/Mozart/file2.mid" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/midi_files/mozart/file3.mid" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/data/midi_files/Mozart/file3.mid" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/music_training.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/music_training.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,14 +42,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/eduardo/PycharmProjects/Lung Cancer&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.app.executor": "Run",
+    "Python.music_training.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/home/eduardo/PycharmProjects/Lung Cancer"
   }
-}</component>
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/scripts/data" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -96,7 +97,15 @@
       <option name="project" value="LOCAL" />
       <updated>1727261462099</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="v2">
+      <option name="closed" value="true" />
+      <created>1728319649757</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1728319649757</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -112,6 +121,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="v1" />
-    <option name="LAST_COMMIT_MESSAGE" value="v1" />
+    <MESSAGE value="v2" />
+    <option name="LAST_COMMIT_MESSAGE" value="v2" />
   </component>
 </project>

@@ -84,13 +84,13 @@ def tokens_to_midi(tokens, output_file=GENERATED_MIDI):
 
 def main():
     st.title("🎵 AI Music Generator")
-    st.write("Generate music by combining Classical mozart and jazz styles using a Transformer model.")
+    st.write("Generate music by combining Classical Mozart and Jazz styles using a Transformer model.")
 
     tokenizer, model = load_model()
 
     with st.sidebar:
         st.header("Generation Settings")
-        style = st.selectbox("Choose Style", options=["mozart", "jazz"])
+        style = st.selectbox("Choose Style", options=["Mozart", "Jazz"])
         prompt = st.text_input("Enter a prompt (optional)", value=f"STYLE:{style}")
         generate_button = st.button("Generate Music")
 
