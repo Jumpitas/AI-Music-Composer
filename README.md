@@ -64,8 +64,8 @@ Ensure you have the following installed:
 1. **Clone the repository**:
 
     ```bash
-    git clone https://github.com/your-username/music-composition-gpt2.git
-    cd music-composition-gpt2
+    git clone https://github.com/Jumpitas/AI-Music-Composer.git
+    cd AI-Music-Composer
     ```
 
 2. **Set up a virtual environment**:
@@ -169,16 +169,6 @@ To improve model performance and dataset diversity, you can apply data augmentat
 - **Pitch Transposition**: Transpose all notes up or down by a certain number of semitones.
 - **Tempo Changes**: Modify the speed of the MIDI files to create a larger variety of inputs.
 - **Instrument Substitution**: Replace instruments in the MIDI files with others to diversify the data.
-
----
-
-## **Future Improvements**
-
-- **Inference Script**: Develop an interactive script for generating and exporting music as MIDI files.
-- **Larger Dataset Support**: Improve the model's ability to handle large and complex datasets.
-- **Web Interface**: Build a simple web interface to input themes and generate compositions dynamically.
-- **Model Optimization**: Apply techniques like mixed-precision training or model pruning for faster training times.
-- **Support for More Styles**: Expand the model to handle a broader range of music genres like rock, pop, classical symphonies, etc.
 
 ---
 
