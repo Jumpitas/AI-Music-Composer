@@ -1,177 +1,179 @@
-# **Music Composition with GPT-2**
+# Music Composition with GPT-2
 
-This project aims to build a music generation model by training a GPT-2 language model on MIDI files. The model learns to generate musical sequences in various styles by encoding MIDI files into tokens and training on these tokenized sequences. The model can be fine-tuned to generate music in the styles of composers like Mozart or specific genres like jazz.
-
----
-
-## **Table of Contents**
-- [Features](#features)
-- [Project Structure](#project-structure)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Running the Project](#running-the-project)
-  - [1. Data Preprocessing](#1-data-preprocessing)
-  - [2. Training the Model](#2-training-the-model)
-  - [3. Generating Music](#3-generating-music)
-- [Dataset](#dataset)
-- [Customization](#customization)
-- [Data Augmentation](#data-augmentation)
-- [Future Improvements](#future-improvements)
+This project focuses on creating a music generation model by training a GPT-2 language model on MIDI files. The model is trained to compose music sequentially by encoding MIDI files into tokens and learning from these tokenized sequences. It can be fine-tuned to produce music in popular styles such as Mozart or jazz.
 
 ---
 
-## **Features**
-
-- Converts MIDI files into tokenized sequences for music generation.
-- Trains a GPT-2 model to generate music in different styles, e.g., Mozart or Jazz.
-- Supports multiple MIDI files and styles for training.
-- Implements data augmentation techniques to diversify training data.
-- Uses Hugging Face’s `Trainer` class for efficient model training.
-- Supports custom dataset loading and easy expansion to other music styles.
+## Table of Contents
+1. [Features](#features)  
+2. [Project Structure](#project-structure)  
+3. [Prerequisites](#prerequisites)  
+4. [Installation](#installation)  
+5. [Running the Project](#running-the-project)  
+    1. [Data Preprocessing](#1-data-preprocessing)  
+    2. [Training the Model](#2-training-the-model)  
+    3. [Generating Music](#3-generating-music)  
+6. [Dataset](#dataset)  
+7. [Customization](#customization)  
+    1. [Adding New Styles](#adding-new-styles)  
+    2. [Adjust Model Parameters](#adjust-model-parameters)  
+8. [Data Augmentation](#data-augmentation)  
+9. [Future Improvements](#future-improvements)  
 
 ---
 
-## **Project Structure**
+## Features
 
-```bash
+- **Transforms MIDI files** into tokenized sequences for music generation.
+- **Trains a GPT-2 model** to generate various styles of music (e.g., Mozart, Jazz).
+- **Supports multiple MIDI files** for training, covering different music styles.
+- **Data augmentation** techniques are implemented to generate a more diverse and well-distributed training dataset.
+- **Efficient training** via Hugging Face’s `Trainer` class.
+- **Flexible dataset sources**: Configure different types of music files and easily add new ones.
+
+---
+
+## Project Structure
+
+```
 ├── data/
-│   ├── midi_files/       # Directory for storing raw MIDI files by style
-│   ├── processed/        # Directory for processed token data
+│   ├── midi_files/    # Directory for storing raw MIDI files by style
+│   ├── processed/     # Directory for processed token data
 ├── models/
-│   └── gpt2-music/       # Directory to save the trained model and tokenizer
-├── outputs/              # Directory to save model outputs (generated music)
-├── logs/                 # Directory for logging training progress
+│   └── gpt2-music/    # Directory to save the trained model and tokenizer
+├── outputs/           # Directory to save model outputs (generated music)
+├── logs/              # Directory for logging training progress
 ├── scripts/
-│   └── music_training.py # Main script for data processing, training, and evaluation
-├── README.md             # Project documentation
-├── requirements.txt      # Required Python libraries
-└── .venv/                # Virtual environment for the project
+│   └── music_training.py  # Main script for data processing, training, and evaluation
+├── README.md          # Project documentation
+├── requirements.txt   # Required Python libraries
+└── .venv/             # Virtual environment for the project
 ```
 
-## **Prerequisites**
+---
 
-Ensure you have the following installed:
+## Prerequisites
 
-- **Python**: Version 3.8 or higher.
+Make sure you have the following installed:
+
+- **Python**: Version 3.8 or newer.
 - **Virtual Environment**: `virtualenv` or `venv` for environment management.
 - **MIDI Files**: A collection of MIDI files to train the model on.
-- Basic understanding of Python and deep learning frameworks like **PyTorch**.
 
 ---
 
-## **Installation**
+## Installation
 
 1. **Clone the repository**:
 
-    ```bash
-    git clone https://github.com/Jumpitas/AI-Music-Composer.git
-    cd AI-Music-Composer
-    ```
+   ```bash
+   git clone https://github.com/Jumpitas/AI-Music-Composer.git
+   cd AI-Music-Composer
+   ```
 
 2. **Set up a virtual environment**:
 
-    ```bash
-    python3 -m venv .venv
-    source .venv/bin/activate  # On Windows use: .venv\Scripts\activate
-    ```
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate
+   ```
+   *On Windows use:* 
+   ```bash
+   .venv\Scripts\activate
+   ```
 
 3. **Install the required dependencies**:
 
-    ```bash
-    pip install -r requirements.txt
-    ```
+   ```bash
+   pip install -r requirements.txt
+   ```
 
 ---
 
-## **Running the Project**
+## Running the Project
 
-### **1. Data Preprocessing**
+### 1. Data Preprocessing
 
-Before training, you need to preprocess the MIDI files into tokenized sequences.
+- **Place your MIDI files** into the `data/midi_files/` directory.  
+- Organize your MIDI files into style-specific subfolders (e.g., `Mozart`, `Jazz`, etc.).
+- **Run the data processing script** to convert the MIDI files into token sequences:
 
-- Place your MIDI files into the `data/midi_files/` directory.
-- Organize them by subfolders representing different styles (e.g., `Mozart`, `Jazz`).
-- Run the data processing script to generate tokens:
+  ```bash
+  python scripts/music_training.py
+  ```
 
-    ```bash
-    python scripts/music_training.py
-    ```
+  This script will:
+  - Parse musical notes from the MIDI files.
+  - Tokenize music data into notes, chords, and other musical elements.
+  - Save the processed tokens into `data/processed/tokens.pkl`.
 
-This script will:
+### 2. Training the Model
 
-- Parse MIDI files.
-- Tokenize musical notes, chords, and other musical elements.
-- Save the processed tokens in `data/processed/tokens.pkl`.
+After preprocessing the data, you can train the GPT-2 model:
 
-### **2. Training the Model**
+```bash
+python scripts/music_training.py
+```
 
-Once the data is processed, you can train the GPT-2 model.
+- This will:
+  - Load the preprocessed tokens.
+  - Tokenize and prepare the dataset for GPT-2.
+  - Train the GPT-2 model on the music sequences.
+  - Save the trained model and tokenizer in `models/gpt2-music/`.
 
-- Run the following command to start training:
+### 3. Generating Music
 
-    ```bash
-    python scripts/music_training.py
-    ```
-
-Training will:
-
-- Load the preprocessed tokens.
-- Tokenize and prepare the dataset for GPT-2.
-- Train the GPT-2 model on the music sequences.
-- Save the trained model and tokenizer in the `models/gpt2-music/` directory.
-
-### **3. Generating Music**
-
-Once the model is trained, you can generate music by running the inference script (in development).
+- The model has a **sequence-to-sequence approach** for music generation.
+- You can **provide a text prompt** describing the music you want, or follow the examples in the repository.
 
 ---
 
-## **Dataset**
+## Dataset
 
-For better results, you can use large MIDI datasets such as:
+For **best results**, use large MIDI datasets such as:
 
 - **Lakh MIDI Dataset (LMD)**: [Download](https://colinraffel.com/projects/lmd/)
 - **MAESTRO Dataset**: [Download](https://magenta.tensorflow.org/datasets/maestro)
-- **Kaggle MIDI Datasets**: [Find on Kaggle](https://www.kaggle.com/search?q=midi+dataset)
+- **Kaggle MIDI Datasets**: [Find on Kaggle](https://www.kaggle.com/)
 
-After downloading, place your new MIDI files into the `data/midi_files/` directory.
-
----
-
-## **Customization**
-
-### **Adding New Styles**
-
-To train the model on new music styles:
-
-1. Place your MIDI files into a subfolder under `data/midi_files/` (e.g., `data/midi_files/Beethoven/`).
-2. Update the `STYLES` list in `music_training.py` to include the new style:
-
-    ```python
-    STYLES = ['Mozart', 'Jazz', 'Beethoven']
-    ```
-
-### **Adjust Model Parameters**
-
-You can adjust the following parameters in `music_training.py`:
-
-- **SEQUENCE_LENGTH**: Length of each input sequence.
-- **BATCH_SIZE**: Batch size for training.
-- **EPOCHS**: Number of epochs for training.
-- **LEARNING_RATE**: Learning rate for the optimizer.
+After downloading, place your new MIDI files in the `data/midi_files/` directory.
 
 ---
 
-## **Data Augmentation**
+## Customization
 
-To improve model performance and dataset diversity, you can apply data augmentation techniques:
+### Adding New Styles
 
-- **Pitch Transposition**: Transpose all notes up or down by a certain number of semitones.
-- **Tempo Changes**: Modify the speed of the MIDI files to create a larger variety of inputs.
-- **Instrument Substitution**: Replace instruments in the MIDI files with others to diversify the data.
+- Create a **new subfolder** under `data/midi_files/` for your desired style (e.g., `data/midi_files/Beethoven/`).
+- **Add your MIDI files** to that folder.
+- **Update the STYLES list** in `music_training.py` to include the new style:
+
+  ```python
+  STYLES = ['Mozart', 'Jazz', 'Beethoven']
+  ```
+
+### Adjust Model Parameters
+
+Inside `music_training.py`, you can modify parameters to suit your needs:
+- `SEQUENCE_LENGTH`: Length of each input sequence.
+- `BATCH_SIZE`: Batch size for training.
+- `EPOCHS`: Number of epochs for training.
+- `LEARNING_RATE`: Learning rate for the optimizer.
 
 ---
 
-## **Contributing**
+## Data Augmentation
 
-Feel free to contribute to this project by submitting issues or creating pull requests. All contributions are welcome!
+To enhance model performance and increase dataset variety, you can use:
+
+- **Tempo Changes**: Speeding up or slowing down MIDI files to introduce variations.
+- **Instrument Substitution**: Changing instruments within the MIDI files for more diverse data.
+
+---
+
+## Future Improvements
+
+- **Advanced model architectures** (e.g., GPT-3, Music Transformer) for richer music generation.
+- **Longer sequence handling** to capture extended musical compositions.
+- **User-friendly interfaces** for interactive music generation.
+- **Fine-grained control** over musical structure, instrumentation, and style.
